@@ -39,12 +39,13 @@ func TestAlias_ScriptAliasesFlagType(t *testing.T) {
 
 func TestAlias_SwitchConstantsWireToEnabledForms(t *testing.T) {
 	cases := []struct {
-		name       string
-		alias, cmd any
+		alias any
+		cmd   any
+		name  string
 	}{
-		{"Loop", perl.Loop, command.PerlLoop},
-		{"Print", perl.Print, command.PerlPrint},
-		{"AutoSplit", perl.AutoSplit, command.PerlAutoSplit},
+		{name: "Loop", alias: perl.Loop, cmd: command.PerlLoop},
+		{name: "Print", alias: perl.Print, cmd: command.PerlPrint},
+		{name: "AutoSplit", alias: perl.AutoSplit, cmd: command.PerlAutoSplit},
 	}
 	for _, c := range cases {
 		if c.alias != c.cmd {
@@ -55,12 +56,13 @@ func TestAlias_SwitchConstantsWireToEnabledForms(t *testing.T) {
 
 func TestAlias_DisabledConstantsWireToDisabledForms(t *testing.T) {
 	cases := []struct {
-		name       string
-		alias, cmd any
+		alias any
+		cmd   any
+		name  string
 	}{
-		{"NoLoop", perl.NoLoop, command.PerlNoLoop},
-		{"NoPrint", perl.NoPrint, command.PerlNoPrint},
-		{"NoAutoSplit", perl.NoAutoSplit, command.PerlNoAutoSplit},
+		{name: "NoLoop", alias: perl.NoLoop, cmd: command.PerlNoLoop},
+		{name: "NoPrint", alias: perl.NoPrint, cmd: command.PerlNoPrint},
+		{name: "NoAutoSplit", alias: perl.NoAutoSplit, cmd: command.PerlNoAutoSplit},
 	}
 	for _, c := range cases {
 		if c.alias != c.cmd {

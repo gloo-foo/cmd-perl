@@ -104,7 +104,11 @@ func switches(f flags) []perlSwitch {
 
 // inputBoundCommand wraps sub so that positional file/reader inputs are opened
 // and streamed to perl's stdin when the command executes.
-func inputBoundCommand(sub gloo.Command[[]byte, []byte], params gloo.Parameters[gloo.File, flags], fs afero.Fs) gloo.Command[[]byte, []byte] {
+func inputBoundCommand(
+	sub gloo.Command[[]byte, []byte],
+	params gloo.Parameters[gloo.File, flags],
+	fs afero.Fs,
+) gloo.Command[[]byte, []byte] {
 	return gloo.FuncCommand[[]byte, []byte](func(ctx context.Context, _ gloo.Stream[[]byte]) gloo.Stream[[]byte] {
 		reader, err := params.ReaderFrom(fs, nil)
 		if err != nil {
