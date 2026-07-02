@@ -10,17 +10,17 @@ import (
 
 // The alias package re-exports the Perl constructor and its flag constants
 // under unprefixed names. A mis-wired re-export (Loop bound to the disabled
-// PerlNoLoop, or Perl bound to the wrong function) compiles cleanly, so the
+// PerlNoLoop, or Perl with a diverging signature) compiles cleanly, so the
 // wiring must be proven. Executing the returned Command would fork real perl —
-// non-hermetic and dependent on a working install — so instead each re-export
-// is proven to point at the exact same value as the command package: identical
-// identity means identical forking behavior.
+// non-hermetic and dependent on a working install — so each constant re-export
+// is proven identical to the command package's value, and the Perl wrapper is
+// pinned to the constructor's exact signature at compile time and proven to
+// build a Command in TestAlias_PerlBuildsCommand.
 
-func TestAlias_PerlReExportsConstructor(t *testing.T) {
-	got := reflect.ValueOf(perl.Perl).Pointer()
-	want := reflect.ValueOf(command.Perl).Pointer()
-	if got != want {
-		t.Fatalf("alias.Perl is not wired to command.Perl (%v != %v)", got, want)
+func TestAlias_PerlSignatureMatchesConstructor(t *testing.T) {
+	want := reflect.TypeOf(command.Perl)
+	if got := reflect.TypeOf(perl.Perl); got != want {
+		t.Fatalf("alias.Perl signature is %v, want %v", got, want)
 	}
 }
 

@@ -33,9 +33,9 @@ func Perl(opts ...any) gloo.Command[[]byte, []byte] {
 // seams keep argument construction and file-input wiring testable without
 // running perl or touching the real filesystem.
 func perlWith(build subprocessBuilder, fs afero.Fs, opts ...any) gloo.Command[[]byte, []byte] {
-	opts = promoteScript(opts)
-	params := gloo.NewParameters[gloo.File, flags](opts...)
-	sub := build("perl", perlArgs(params.Flags)...)
+	f, rest := foldOptions(promoteScript(opts))
+	params := gloo.NewParameters[gloo.File, struct{}](rest...)
+	sub := build("perl", perlArgs(f)...)
 	if len(params.Positional) == 0 {
 		return sub
 	}
@@ -80,7 +80,7 @@ func perlArgs(f flags) []string {
 func switchArgs(f flags) []string {
 	var args []string
 	for _, s := range switches(f) {
-		if s.on {
+		if s.isOn {
 			args = append(args, s.flag)
 		}
 	}
@@ -90,15 +90,15 @@ func switchArgs(f flags) []string {
 // perlSwitch pairs a mode flag with whether it is enabled.
 type perlSwitch struct {
 	flag string
-	on   bool
+	isOn bool
 }
 
 // switches lists the perl mode switches in canonical command-line order.
 func switches(f flags) []perlSwitch {
 	return []perlSwitch{
-		{flag: "-n", on: bool(f.loop)},
-		{flag: "-p", on: bool(f.print)},
-		{flag: "-a", on: bool(f.autoSplit)},
+		{flag: "-n", isOn: bool(f.loopEnabled)},
+		{flag: "-p", isOn: bool(f.printEnabled)},
+		{flag: "-a", isOn: bool(f.autoSplitEnabled)},
 	}
 }
 
@@ -106,7 +106,7 @@ func switches(f flags) []perlSwitch {
 // and streamed to perl's stdin when the command executes.
 func inputBoundCommand(
 	sub gloo.Command[[]byte, []byte],
-	params gloo.Parameters[gloo.File, flags],
+	params gloo.Parameters[gloo.File, struct{}],
 	fs afero.Fs,
 ) gloo.Command[[]byte, []byte] {
 	return gloo.FuncCommand[[]byte, []byte](func(ctx context.Context, _ gloo.Stream[[]byte]) gloo.Stream[[]byte] {

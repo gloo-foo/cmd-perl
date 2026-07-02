@@ -4,10 +4,14 @@
 //	perl.Perl(perl.Script("s/a/b/"), perl.Print)
 package alias
 
-import command "github.com/gloo-foo/cmd-perl"
+import (
+	gloo "github.com/gloo-foo/framework"
 
-// Perl re-exports the constructor.
-var Perl = command.Perl
+	command "github.com/gloo-foo/cmd-perl"
+)
+
+// Perl re-exports the constructor by delegation, preserving its exact signature.
+func Perl(opts ...any) gloo.Command[[]byte, []byte] { return command.Perl(opts...) }
 
 // Script re-exports the -e script-body flag type.
 type Script = command.PerlScript
