@@ -3,7 +3,7 @@ module github.com/gloo-foo/cmd-perl
 go 1.26.4
 
 require (
-	github.com/destel/rill v0.8.1
+	github.com/destel/rill v0.9.0
 	github.com/gloo-foo/framework v0.1.28
 	github.com/spf13/afero v1.15.0
 )
